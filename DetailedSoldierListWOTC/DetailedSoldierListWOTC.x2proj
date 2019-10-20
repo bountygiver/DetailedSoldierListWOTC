@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Guid>2cf610f9-a9c3-473a-a61d-5cc1f9f4075b</Guid>
+    <Name>DetailedSoldierListWOTC</Name>
+    <Description>Description of My XCOM 2 Mod.</Description>
+    <SteamPublishID>0</SteamPublishID>
+    <AssemblyName>DetailedSoldierListWOTC</AssemblyName>
+    <RootNamespace>DetailedSoldierListWOTC</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Config\" />
+    <Folder Include="Content\" />
+    <Folder Include="Localization\" />
+    <Folder Include="Src\" />
+    <Folder Include="Src\DetailedSoldierListWOTC\" />
+    <Folder Include="Src\DetailedSoldierListWOTC\Classes\" />
+    <Folder Include="Src\LW_Tuple" />
+    <Folder Include="Src\LW_Tuple\Classes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\UILibrary_LWToolbox.upk">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\DetailedSoldierListWOTC.INT">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ReadMe.txt" />
+    <Content Include="ModPreview.jpg" />
+    <Content Include="Config\XComEditor.ini" />
+    <Content Include="Config\XComEngine.ini" />
+    <Content Include="Config\XComGame.ini" />
+    <Content Include="Localization\XComGame.int" />
+    <Content Include="Src\DetailedSoldierListWOTC\Classes\MoreDetailsManager.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\DetailedSoldierListWOTC\Classes\MoreDetailsNavigatorWrapper.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\DetailedSoldierListWOTC\Classes\UIPersonnel_SoldierListItemDetailed.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\DetailedSoldierListWOTC\Classes\X2DownloadableContentInfo_DetailedSoldierListWOTC.uc" />
+    <Content Include="Src\LW_Tuple\Classes\LWTuple.uc">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
+</Project>
