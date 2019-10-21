@@ -339,7 +339,17 @@ simulated function UpdateData()
 	SoldierClass = Unit.GetSoldierClassTemplate();
 	FactionState = Unit.GetResistanceFaction();
 
-	GetPersonnelStatusSeparate(Unit, status, statusTimeLabel, statusTimeValue);
+	if (class'X2DownloadableContentInfo_DetailedSoldierListWOTC'.default.IsRequiredCHLInstalled)
+	{
+		// Use the Community Highlander function so that we work with mods that
+		// use the unit status hooks it provides.
+		class'UIUtilities_Strategy'.static.GetPersonnelStatusSeparate(Unit, status, statusTimeLabel, statusTimeValue);
+	}
+	else
+	{
+		GetPersonnelStatusSeparate(Unit, status, statusTimeLabel, statusTimeValue);
+	}
+
 	mentalStatus = "";
 
 	if(Unit.IsActive())

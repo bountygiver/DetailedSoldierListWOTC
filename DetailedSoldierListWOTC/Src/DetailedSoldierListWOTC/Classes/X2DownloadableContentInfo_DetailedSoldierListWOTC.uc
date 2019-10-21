@@ -11,6 +11,28 @@
 //---------------------------------------------------------------------------------------
 
 class X2DownloadableContentInfo_DetailedSoldierListWOTC extends X2DownloadableContentInfo;
+
+var config bool IsRequiredCHLInstalled;
+
+// Copied from robojumper's SquadSelect. Checks whether the Community Highlander
+// is active and meets the given minimum version requirement.
+static function bool IsCHLMinVersionInstalled(int iMajor, int iMinor)
+{
+	local X2StrategyElementTemplate VersionTemplate;
+
+	VersionTemplate = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager().FindStrategyElementTemplate('CHXComGameVersion');
+	if (VersionTemplate == none)
+	{
+		return false;
+	}
+	else
+	{
+		// DANGER TERRITORY
+		// if this runs without the CHHL or equivalent installed, it crashes
+		return CHXComGameVersionTemplate(VersionTemplate).MajorVersion > iMajor ||  (CHXComGameVersionTemplate(VersionTemplate).MajorVersion == iMajor && CHXComGameVersionTemplate(VersionTemplate).MinorVersion >= iMinor);
+	}
+}
+
 /// <summary>
 /// This method is run if the player loads a saved game that was created prior to this DLC / Mod being installed, and allows the 
 /// DLC / Mod to perform custom processing in response. This will only be called once the first time a player loads a save that was
@@ -78,7 +100,7 @@ static event OnExitPostMissionSequence()
 /// </summary>
 static event OnPostTemplatesCreated()
 {
-
+	default.IsRequiredCHLInstalled = IsCHLMinVersionInstalled(1, 19);
 }
 
 /// <summary>
