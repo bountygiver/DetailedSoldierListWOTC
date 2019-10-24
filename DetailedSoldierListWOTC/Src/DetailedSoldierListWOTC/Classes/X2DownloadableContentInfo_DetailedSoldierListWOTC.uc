@@ -18,19 +18,9 @@ var config bool IsRequiredCHLInstalled;
 // is active and meets the given minimum version requirement.
 static function bool IsCHLMinVersionInstalled(int iMajor, int iMinor)
 {
-	local X2StrategyElementTemplate VersionTemplate;
-
-	VersionTemplate = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager().FindStrategyElementTemplate('CHXComGameVersion');
-	if (VersionTemplate == none)
-	{
-		return false;
-	}
-	else
-	{
-		// DANGER TERRITORY
-		// if this runs without the CHHL or equivalent installed, it crashes
-		return CHXComGameVersionTemplate(VersionTemplate).MajorVersion > iMajor ||  (CHXComGameVersionTemplate(VersionTemplate).MajorVersion == iMajor && CHXComGameVersionTemplate(VersionTemplate).MinorVersion >= iMinor);
-	}
+	return class'CHXComGameVersionTemplate'.default.MajorVersion > iMajor ||
+		(class'CHXComGameVersionTemplate'.default.MajorVersion == iMajor &&
+		 class'CHXComGameVersionTemplate'.default.MinorVersion >= iMinor);
 }
 
 /// <summary>
@@ -95,12 +85,18 @@ static event OnExitPostMissionSequence()
 
 }
 
+// Added in Community Highlander 1.18, so if this is called, the highlander is
+// guaranteed to be loaded.
+static function OnPreCreateTemplates()
+{
+	default.IsRequiredCHLInstalled = IsCHLMinVersionInstalled(1, 19);
+}
+
 /// <summary>
 /// Called after the Templates have been created (but before they are validated) while this DLC / Mod is installed.
 /// </summary>
 static event OnPostTemplatesCreated()
 {
-	default.IsRequiredCHLInstalled = IsCHLMinVersionInstalled(1, 19);
 }
 
 /// <summary>

@@ -9,6 +9,13 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 
+	// If CHL isn't loaded, break out of this function right away to avoid
+	// UnrealEngine attempting to load classes it doesn't have access to.
+	if (!class'X2DownloadableContentInfo_DetailedSoldierListWOTC'.default.IsRequiredCHLInstalled)
+	{
+		return Templates;
+	}
+
 	Templates.AddItem(CreateStatusListeners());
 
 	return Templates;
