@@ -352,7 +352,7 @@ simulated function UpdateData()
 
 	mentalStatus = "";
 
-	if(Unit.IsActive())
+	if(ShouldDisplayMentalStatus(Unit))
 	{
 		GetUnitMentalState(Unit, mentalStatus, statusTimeLabel, iTimeNum);
 		statusTimeLabel = class'UIUtilities_Text'.static.GetColoredText(statusTimeLabel, Unit.GetMentalStateUIState());
@@ -464,6 +464,35 @@ simulated function UpdateData()
 	RefreshTooltipText();
 
 	class'MoreDetailsManager'.static.GetOrSpawnParentDM(self).IsMoreDetails = false;
+}
+
+simulated protected function bool ShouldDisplayMentalStatus (XComGameState_Unit Unit)
+{
+	if (class'X2DownloadableContentInfo_DetailedSoldierListWOTC'.default.IsRequiredCHLInstalled)
+	{
+		// Use the Community Highlander event so that we work with mods that
+		// use the mental status display override hook
+		return TriggerShouldDisplayMentalStatus(Unit);
+	}
+
+	// Fallback to default logic
+	return Unit.IsActive();
+}
+
+simulated protected function bool TriggerShouldDisplayMentalStatus (XComGameState_Unit Unit)
+{
+	local XComLWTuple Tuple;
+
+	Tuple = new class'XComLWTuple';
+	Tuple.Data.Add(2);
+	Tuple.Data[0].kind = XComLWTVBool;
+	Tuple.Data[0].b = Unit.IsActive();
+	Tuple.Data[1].kind = XComLWTVObject;
+	Tuple.Data[1].o = Unit;
+
+	`XEVENTMGR.TriggerEvent('SoldierListItem_ShouldDisplayMentalStatus', Tuple, self);
+
+	return Tuple.Data[0].b;
 }
 
 function AddAdditionalItems(UIPersonnel_SoldierListItem ListItem)
