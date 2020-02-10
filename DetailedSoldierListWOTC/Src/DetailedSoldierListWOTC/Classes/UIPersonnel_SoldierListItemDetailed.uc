@@ -2,6 +2,7 @@ class UIPersonnel_SoldierListItemDetailed extends UIPersonnel_SoldierListItem co
 
 var config int NUM_HOURS_TO_DAYS;
 var config bool ROOKIE_SHOW_PSI_INSTEAD_CI;
+var config bool SHOW_KILL_XP_NOT_ASSISTS;
 
 var float IconXPos, IconYPos, IconXDelta, IconScale, IconToValueOffsetX, IconToValueOffsetY, IconXDeltaSmallValue;
 var float DisabledAlpha;
@@ -47,6 +48,7 @@ simulated function UIButton SetDisabled(bool disabled, optional string TooltipTe
 simulated function string GetPromotionProgress(XComGameState_Unit Unit)
 {
 	local string promoteProgress;
+	local int NumKills;
 	local X2SoldierClassTemplate ClassTemplate;
 
 	if (Unit.IsSoldier())
@@ -63,7 +65,18 @@ simulated function string GetPromotionProgress(XComGameState_Unit Unit)
 		return "";
 	}
 
-	promoteProgress = Unit.GetTotalNumKills() $ "/" $ class'X2ExperienceConfig'.static.GetRequiredKills(Unit.GetSoldierRank() + 1);
+	if (SHOW_KILL_XP_NOT_ASSISTS)
+	{
+		promoteProgress = Unit.GetTotalNumKills() $ "/" $ class'X2ExperienceConfig'.static.GetRequiredKills(Unit.GetSoldierRank() + 1);
+	}
+	else
+	{
+		// Deduct the existing assists contribution before multiplying by KillAssistsPerKill.
+		// Ignoring psi credits as they appear not to be used at all.
+		NumKills = Unit.GetTotalNumKills() - Round(Unit.KillAssistsCount) / ClassTemplate.KillAssistsPerKill;
+		promoteProgress = NumKills * ClassTemplate.KillAssistsPerKill + int(Unit.KillAssistsCount) $
+				"/" $ class'X2ExperienceConfig'.static.GetRequiredKills(Unit.GetSoldierRank() + 1) * ClassTemplate.KillAssistsPerKill;
+	}
 
 	return class'UIUtilities_Text'.static.InjectImage(class'UIUtilities_Image'.const.HTML_PromotionIcon, 16, 20, -6) $ "</img>" @ promoteProgress;
 }
