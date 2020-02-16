@@ -11,6 +11,18 @@
 //---------------------------------------------------------------------------------------
 
 class X2DownloadableContentInfo_DetailedSoldierListWOTC extends X2DownloadableContentInfo;
+
+var config bool IsRequiredCHLInstalled;
+
+// Copied from robojumper's SquadSelect. Checks whether the Community Highlander
+// is active and meets the given minimum version requirement.
+static function bool IsCHLMinVersionInstalled(int iMajor, int iMinor)
+{
+	return class'CHXComGameVersionTemplate'.default.MajorVersion > iMajor ||
+		(class'CHXComGameVersionTemplate'.default.MajorVersion == iMajor &&
+		 class'CHXComGameVersionTemplate'.default.MinorVersion >= iMinor);
+}
+
 /// <summary>
 /// This method is run if the player loads a saved game that was created prior to this DLC / Mod being installed, and allows the 
 /// DLC / Mod to perform custom processing in response. This will only be called once the first time a player loads a save that was
@@ -73,12 +85,18 @@ static event OnExitPostMissionSequence()
 
 }
 
+// Added in Community Highlander 1.18, so if this is called, the highlander is
+// guaranteed to be loaded.
+static function OnPreCreateTemplates()
+{
+	default.IsRequiredCHLInstalled = IsCHLMinVersionInstalled(1, 19);
+}
+
 /// <summary>
 /// Called after the Templates have been created (but before they are validated) while this DLC / Mod is installed.
 /// </summary>
 static event OnPostTemplatesCreated()
 {
-
 }
 
 /// <summary>
