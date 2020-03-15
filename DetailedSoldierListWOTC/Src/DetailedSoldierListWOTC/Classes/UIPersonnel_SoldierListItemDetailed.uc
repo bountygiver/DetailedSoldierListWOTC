@@ -322,7 +322,7 @@ simulated function bool ShouldShowPsi(XComGameState_Unit Unit)
 simulated function UpdateData()
 {
 	local XComGameState_Unit Unit;
-	local string UnitLoc, status, statusTimeLabel, statusTimeValue, classIcon, rankIcon, flagIcon, mentalStatus;
+	local string UnitLoc, status, statusTimeLabel, statusTimeValue, classIcon, shortRankName, rankIcon, flagIcon, mentalStatus;
 	local int iRank, iTimeNum;
 	local X2SoldierClassTemplate SoldierClass;
 	local XComGameState_ResistanceFaction FactionState;
@@ -371,9 +371,21 @@ simulated function UpdateData()
 		statusTimeValue = "---";
 
 	flagIcon = Unit.GetCountryTemplate().FlagImage;
-	//rankIcon = class'UIUtilities_Image'.static.GetRankIcon(iRank, SoldierClass.DataName);
-	rankIcon = class'UIUtilities_Image'.static.GetRankIcon(iRank, SoldierClass.DataName);
 	classIcon = SoldierClass.IconImage;
+	if (class'X2DownloadableContentInfo_DetailedSoldierListWOTC'.default.IsRequiredCHLInstalled)
+	{
+		// If the Community Highlander is installed, use its functions for
+		// getting the soldier rank information to support mods that provide
+		// custom ranks.
+		shortRankName = Unit.GetSoldierShortRankName();
+		rankIcon = Unit.GetSoldierRankIcon();
+	}
+	else
+	{
+		shortRankName = `GET_RANK_ABBRV(Unit.GetRank(), SoldierClass.DataName);
+		//rankIcon = class'UIUtilities_Image'.static.GetRankIcon(iRank, SoldierClass.DataName);
+		rankIcon = class'UIUtilities_Image'.static.GetRankIcon(iRank, SoldierClass.DataName);
+	}
 
 	// if personnel is not staffed, don't show location
 	if( class'UIUtilities_Strategy'.static.DisplayLocation(Unit) )
@@ -445,7 +457,7 @@ simulated function UpdateData()
 
 	AS_UpdateDataSoldier(Caps(Unit.GetName(eNameType_Full)),
 					Caps(Unit.GetName(eNameType_Nick)),
-					Caps(`GET_RANK_ABBRV(Unit.GetRank(), SoldierClass.DataName)),
+					Caps(shortRankName),
 					rankIcon,
 					Caps(SoldierClass != None ? SoldierClass.DisplayName : ""),
 					classIcon,
