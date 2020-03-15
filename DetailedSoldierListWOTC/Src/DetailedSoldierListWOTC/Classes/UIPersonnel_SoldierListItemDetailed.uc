@@ -48,7 +48,6 @@ simulated function UIButton SetDisabled(bool disabled, optional string TooltipTe
 simulated function string GetPromotionProgress(XComGameState_Unit Unit)
 {
 	local string promoteProgress;
-	local int NumKills;
 	local X2SoldierClassTemplate ClassTemplate;
 
 	if (Unit.IsSoldier())
@@ -71,10 +70,10 @@ simulated function string GetPromotionProgress(XComGameState_Unit Unit)
 	}
 	else
 	{
-		// Deduct the existing assists contribution before multiplying by KillAssistsPerKill.
-		// Ignoring psi credits as they appear not to be used at all.
-		NumKills = Unit.GetTotalNumKills() - Round(Unit.KillAssistsCount) / ClassTemplate.KillAssistsPerKill;
-		promoteProgress = NumKills * ClassTemplate.KillAssistsPerKill + int(Unit.KillAssistsCount) $
+		// GetTotalNumKills() includes the contribution from kill assists (and psi credits,
+		// but ignoring those as they appear not to be used at all). We then need to add the
+		// remainder from kill assist count that's not included in GetTotalNumKills().
+		promoteProgress = Unit.GetTotalNumKills() * ClassTemplate.KillAssistsPerKill  + (Unit.KillAssistsCount % ClassTemplate.KillAssistsPerKill) $
 				"/" $ class'X2ExperienceConfig'.static.GetRequiredKills(Unit.GetSoldierRank() + 1) * ClassTemplate.KillAssistsPerKill;
 	}
 
