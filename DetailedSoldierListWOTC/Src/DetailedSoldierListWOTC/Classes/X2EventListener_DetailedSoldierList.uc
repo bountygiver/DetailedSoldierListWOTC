@@ -77,4 +77,6 @@ static function EventListenerReturn OnOverridePersonnelStatusTime(Object EventDa
 		OverrideTuple.Data[1].s = class'UIUtilities_Text'.static.GetHoursString(Hours);
 		OverrideTuple.Data[2].i = Hours;
 	}
+
+	return ELR_NoInterrupt;
 }
