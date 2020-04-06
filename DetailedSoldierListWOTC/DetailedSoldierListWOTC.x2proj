@@ -41,6 +41,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\DetailedSoldierListWOTC\Classes\X2DownloadableContentInfo_DetailedSoldierListWOTC.uc" />
+    <Content Include="Src\DetailedSoldierListWOTC\Classes\X2EventListener_DetailedSoldierList.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\LW_Tuple\Classes\LWTuple.uc">
       <SubType>Content</SubType>
     </Content>
