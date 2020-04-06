@@ -342,12 +342,19 @@ simulated function UpdateData()
 	if (class'X2DownloadableContentInfo_DetailedSoldierListWOTC'.default.IsRequiredCHLInstalled)
 	{
 		// Use the Community Highlander function so that we work with mods that
-		// use the unit status hooks it provides.
+		// use the unit status and rank hooks it provides
 		class'UIUtilities_Strategy'.static.GetPersonnelStatusSeparate(Unit, status, statusTimeLabel, statusTimeValue);
+
+		shortRankName = Unit.GetSoldierShortRankName();
+		rankIcon = Unit.GetSoldierRankIcon();
 	}
 	else
 	{
 		GetPersonnelStatusSeparate(Unit, status, statusTimeLabel, statusTimeValue);
+
+		shortRankName = `GET_RANK_ABBRV(Unit.GetRank(), SoldierClass.DataName);
+		//rankIcon = class'UIUtilities_Image'.static.GetRankIcon(iRank, SoldierClass.DataName);
+		rankIcon = class'UIUtilities_Image'.static.GetRankIcon(iRank, SoldierClass.DataName);
 	}
 
 	mentalStatus = "";
@@ -372,20 +379,6 @@ simulated function UpdateData()
 
 	flagIcon = Unit.GetCountryTemplate().FlagImage;
 	classIcon = SoldierClass.IconImage;
-	if (class'X2DownloadableContentInfo_DetailedSoldierListWOTC'.default.IsRequiredCHLInstalled)
-	{
-		// If the Community Highlander is installed, use its functions for
-		// getting the soldier rank information to support mods that provide
-		// custom ranks.
-		shortRankName = Unit.GetSoldierShortRankName();
-		rankIcon = Unit.GetSoldierRankIcon();
-	}
-	else
-	{
-		shortRankName = `GET_RANK_ABBRV(Unit.GetRank(), SoldierClass.DataName);
-		//rankIcon = class'UIUtilities_Image'.static.GetRankIcon(iRank, SoldierClass.DataName);
-		rankIcon = class'UIUtilities_Image'.static.GetRankIcon(iRank, SoldierClass.DataName);
-	}
 
 	// if personnel is not staffed, don't show location
 	if( class'UIUtilities_Strategy'.static.DisplayLocation(Unit) )
