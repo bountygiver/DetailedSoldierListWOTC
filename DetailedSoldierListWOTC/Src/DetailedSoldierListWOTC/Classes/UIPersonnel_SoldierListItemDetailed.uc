@@ -316,7 +316,7 @@ simulated function bool ShouldShowPsi(XComGameState_Unit Unit)
 simulated function UpdateData()
 {
 	local XComGameState_Unit Unit;
-	local string UnitLoc, status, statusTimeLabel, statusTimeValue, classIcon, rankIcon, flagIcon, mentalStatus;
+	local string UnitLoc, status, statusTimeLabel, statusTimeValue, classIcon, shortRankName, rankIcon, flagIcon, mentalStatus;
 	local int iRank, iTimeNum;
 	local X2SoldierClassTemplate SoldierClass;
 	local XComGameState_ResistanceFaction FactionState;
@@ -336,12 +336,19 @@ simulated function UpdateData()
 	if (class'X2DownloadableContentInfo_DetailedSoldierListWOTC'.default.IsRequiredCHLInstalled)
 	{
 		// Use the Community Highlander function so that we work with mods that
-		// use the unit status hooks it provides.
+		// use the unit status and rank hooks it provides
 		class'UIUtilities_Strategy'.static.GetPersonnelStatusSeparate(Unit, status, statusTimeLabel, statusTimeValue);
+
+		shortRankName = Unit.GetSoldierShortRankName();
+		rankIcon = Unit.GetSoldierRankIcon();
 	}
 	else
 	{
 		GetPersonnelStatusSeparate(Unit, status, statusTimeLabel, statusTimeValue);
+
+		shortRankName = `GET_RANK_ABBRV(Unit.GetRank(), SoldierClass.DataName);
+		//rankIcon = class'UIUtilities_Image'.static.GetRankIcon(iRank, SoldierClass.DataName);
+		rankIcon = class'UIUtilities_Image'.static.GetRankIcon(iRank, SoldierClass.DataName);
 	}
 
 	mentalStatus = "";
@@ -365,8 +372,6 @@ simulated function UpdateData()
 		statusTimeValue = "---";
 
 	flagIcon = Unit.GetCountryTemplate().FlagImage;
-	//rankIcon = class'UIUtilities_Image'.static.GetRankIcon(iRank, SoldierClass.DataName);
-	rankIcon = class'UIUtilities_Image'.static.GetRankIcon(iRank, SoldierClass.DataName);
 	classIcon = SoldierClass.IconImage;
 
 	// if personnel is not staffed, don't show location
@@ -439,7 +444,7 @@ simulated function UpdateData()
 
 	AS_UpdateDataSoldier(Caps(Unit.GetName(eNameType_Full)),
 					Caps(Unit.GetName(eNameType_Nick)),
-					Caps(`GET_RANK_ABBRV(Unit.GetRank(), SoldierClass.DataName)),
+					Caps(shortRankName),
 					rankIcon,
 					Caps(SoldierClass != None ? SoldierClass.DisplayName : ""),
 					classIcon,
