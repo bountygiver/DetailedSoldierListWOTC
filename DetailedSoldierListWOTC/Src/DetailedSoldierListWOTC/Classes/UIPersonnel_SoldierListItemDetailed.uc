@@ -73,7 +73,7 @@ simulated function string GetPromotionProgress(XComGameState_Unit Unit)
 		// GetTotalNumKills() includes the contribution from kill assists (and psi credits,
 		// but ignoring those as they appear not to be used at all). We then need to add the
 		// remainder from kill assist count that's not included in GetTotalNumKills().
-		promoteProgress = Unit.GetTotalNumKills() * ClassTemplate.KillAssistsPerKill  + (Unit.KillAssistsCount % ClassTemplate.KillAssistsPerKill) $
+		promoteProgress = int(Unit.GetTotalNumKills() * ClassTemplate.KillAssistsPerKill + (Unit.KillAssistsCount % ClassTemplate.KillAssistsPerKill)) $
 				"/" $ class'X2ExperienceConfig'.static.GetRequiredKills(Unit.GetSoldierRank() + 1) * ClassTemplate.KillAssistsPerKill;
 	}
 
