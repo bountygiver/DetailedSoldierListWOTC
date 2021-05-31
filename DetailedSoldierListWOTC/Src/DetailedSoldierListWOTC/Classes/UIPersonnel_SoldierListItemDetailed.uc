@@ -2,6 +2,7 @@ class UIPersonnel_SoldierListItemDetailed extends UIPersonnel_SoldierListItem co
 
 var config int NUM_HOURS_TO_DAYS;
 var config bool ROOKIE_SHOW_PSI_INSTEAD_CI;
+var config bool SHOW_KILL_XP_NOT_ASSISTS;
 
 var float IconXPos, IconYPos, IconXDelta, IconScale, IconToValueOffsetX, IconToValueOffsetY, IconXDeltaSmallValue;
 var float DisabledAlpha;
@@ -47,7 +48,6 @@ simulated function UIButton SetDisabled(bool disabled, optional string TooltipTe
 simulated function string GetPromotionProgress(XComGameState_Unit Unit)
 {
 	local string promoteProgress;
-	local int NumKills;
 	local X2SoldierClassTemplate ClassTemplate;
 
 	if (Unit.IsSoldier())
@@ -64,24 +64,18 @@ simulated function string GetPromotionProgress(XComGameState_Unit Unit)
 		return "";
 	}
 
-	NumKills = Round(Unit.KillCount * ClassTemplate.KillAssistsPerKill);
-
-	// Increase kills for WetWork bonus if appropriate - DEPRECATED
-	NumKills += Round(Unit.WetWorkKills * class'X2ExperienceConfig'.default.NumKillsBonus * ClassTemplate.KillAssistsPerKill);
-
-	// Add in bonus kills
-	NumKills += Round(Unit.BonusKills * ClassTemplate.KillAssistsPerKill);
-
-	//  Add number of kills from assists
-	NumKills += Round(Unit.KillAssistsCount);
-
-	// Add required kills of StartingRank
-	NumKills += class'X2ExperienceConfig'.static.GetRequiredKills(Unit.StartingRank) * ClassTemplate.KillAssistsPerKill;
-
-	// Add Non-tactical kills (from covert actions)
-	NumKills += Unit.NonTacticalKills * ClassTemplate.KillAssistsPerKill;
-
-	promoteProgress = NumKills $ "/" $ class'X2ExperienceConfig'.static.GetRequiredKills(Unit.GetSoldierRank() + 1) * ClassTemplate.KillAssistsPerKill;
+	if (SHOW_KILL_XP_NOT_ASSISTS)
+	{
+		promoteProgress = Unit.GetTotalNumKills() $ "/" $ class'X2ExperienceConfig'.static.GetRequiredKills(Unit.GetSoldierRank() + 1);
+	}
+	else
+	{
+		// GetTotalNumKills() includes the contribution from kill assists (and psi credits,
+		// but ignoring those as they appear not to be used at all). We then need to add the
+		// remainder from kill assist count that's not included in GetTotalNumKills().
+		promoteProgress = Unit.GetTotalNumKills() * ClassTemplate.KillAssistsPerKill  + (Unit.KillAssistsCount % ClassTemplate.KillAssistsPerKill) $
+				"/" $ class'X2ExperienceConfig'.static.GetRequiredKills(Unit.GetSoldierRank() + 1) * ClassTemplate.KillAssistsPerKill;
+	}
 
 	return class'UIUtilities_Text'.static.InjectImage(class'UIUtilities_Image'.const.HTML_PromotionIcon, 16, 20, -6) $ "</img>" @ promoteProgress;
 }
